@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="img/Logo.png">
+<link rel="apple-touch-icon" href="img/Logo.png">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>연세의원 · 대전 대덕구 중리동 얼굴 잡티 제거, 보톡스, 내과</title>
 <meta name="description" content="대전 대덕구 중리로 62 연세의원. 얼굴 잡티 제거, 편평사마귀, 보톡스, 내과 진료. 진료과목 내과·피부과·소아청소년과·이비인후과·외과·비뇨의학과. 진료시간, 비급여 진료비, 오시는 길">
@@ -47,7 +49,10 @@
   /* 헤더 */
   .header { position: sticky; top: 0; z-index: 50; background: #fff; border-bottom: 1px solid var(--line); }
   .header .inner { height: 72px; display: flex; align-items: center; }
-  .logo { display: flex; flex-direction: column; line-height: 1; }
+  .logo { display: flex; align-items: center; gap: 10px; line-height: 1; }
+  .logo-txt { display: flex; flex-direction: column; }
+  .logo-mark { width: 40px; height: 40px; flex: none; border-radius: 8px; }
+  @media (max-width: 959px) { .logo-mark { width: 34px; height: 34px; } }
   .logo b { font-size: 22px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; }
   .logo small { margin-top: 4px; font-family: var(--en); font-size: 9px; letter-spacing: 0.18em; color: var(--mute); }
   .gnb { display: none; margin-left: auto; gap: 44px; height: 100%; }
@@ -246,8 +251,6 @@
   .more-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 20px; font-size: 15px; font-weight: 600; color: var(--brand); text-decoration: underline; text-underline-offset: 3px; }
   td small { display: block; margin-top: 2px; font-size: 13px; font-weight: 400; color: var(--mute); }
   td.cat small { display: block; margin-top: 2px; font-size: 13px; font-weight: 400; color: var(--mute); }
-  .ins td.cat { width: 20%; }
-  @media (max-width: 639px) { .ins th, .ins td { padding: 12px 4px; font-size: 13px; } .ins td.cat { width: auto; } }
   td.won, th.won { text-align: right; font-variant-numeric: tabular-nums; }
   td.won { font-weight: 600; color: var(--ink); }
   .tbl-note { margin-top: 12px; font-size: 14px; line-height: 1.7; color: var(--mute); }
@@ -314,7 +317,8 @@
 
   /* 푸터 */
   footer { background: var(--foot); padding: 48px 0 112px; font-size: 13px; line-height: 2; color: var(--mute); }
-  footer .f-logo { font-size: 18px; font-weight: 700; color: var(--mute); margin-bottom: 12px; }
+  footer .f-logo { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; color: var(--mute); margin-bottom: 12px; }
+  footer .logo-mark { width: 26px; height: 26px; border-radius: 6px; }
   footer .copy { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
   footer .copy a:hover { color: var(--ink); }
   @media (min-width: 960px) { footer { padding-bottom: 48px; } }
@@ -390,7 +394,7 @@
 
 <header class="header">
   <div class="inner">
-    <a class="logo" href="#home" aria-label="연세의원 처음으로"><b>연세의원</b><small>YON SEI CLINIC</small></a>
+    <a class="logo" href="#home" aria-label="연세의원 처음으로"><img class="logo-mark" src="img/Logo.png" alt=""><span class="logo-txt"><b>연세의원</b><small>YON SEI CLINIC</small></span></a>
     <nav class="gnb" aria-label="주요 메뉴">
       <a href="#home" class="n-home">병원소개</a>
       <a href="#care" class="n-care">진료과목</a>
@@ -493,7 +497,7 @@
         <ul class="faq-list">
           <li class="faq-card"><svg class="ic"><use href="#i-check"/></svg><div><h3>지금 진료하고 있나요?</h3><p>평일은 오전 9시부터 오후 6시까지(점심시간 12시 30분~1시 30분), 토요일은 오후 1시까지 진료합니다. 진료 끝나기 10분 전에 접수를 마감해요.</p></div></li>
           <li class="faq-card"><svg class="ic"><use href="#i-check"/></svg><div><h3>피부 시술도 바로 받을 수 있나요?</h3><p>피부 시술은 모두 예약제입니다. 예약 방문은 평일 오전 9시~오후 4시, 토요일 오전 9시~12시이고, 042-626-7572로 전화 주시면 예약을 도와드려요.</p></div></li>
-          <li class="faq-card"><svg class="ic"><use href="#i-check"/></svg><div><h3>비용은 얼마나 나오나요?</h3><p>건강보험 진료는 6~64세 평일 초진 기준 진찰료 5,600원입니다. 피부 시술·예방접종 같은 비급여 항목은 진료과목 페이지에 금액을 모두 공개해 두었습니다.</p></div></li>
+          <li class="faq-card"><svg class="ic"><use href="#i-check"/></svg><div><h3>비용은 얼마나 나오나요?</h3><p>피부 시술·예방접종 같은 비급여 항목은 진료과목 페이지에 금액을 모두 공개해 두었습니다.</p></div></li>
           <li class="faq-card"><svg class="ic"><use href="#i-check"/></svg><div><h3>전화하기 어려우면요?</h3><p>카카오톡 1:1 문의로 남겨 주시면 진료 시간 안에 답해 드립니다.</p></div></li>
         </ul>
       </div>
@@ -641,18 +645,6 @@
           </tbody>
         </table>
         <p class="tbl-note">* 피부 시술(잡티·편평사마귀 제거, 레이저, 보톡스, 필러, 스킨부스터) 금액은 부가세(VAT) 별도이며, 카드·계좌이체 모두 같습니다.<br>* 얼굴 잡티 제거에는 점, 흑자, 기미, 모공, 편평사마귀, 비립종, 한관종이 들어갑니다. 2차 금액은 1차 시술 후 10개월 안에 받으실 때 적용됩니다.<br>* 얼굴 전체 보톡스는 2주 안에 리터치가 포함됩니다.<br>* 건강보험이 적용되지 않는 비급여 항목입니다. 진료 전에 한 번 더 안내해 드립니다.</p>
-        <div class="tbl-head" style="margin-top:64px"><h2>건강보험 진료비</h2><span>2026년 1월 1일 기준</span></div>
-        <table class="ins">
-          <thead><tr><th>나이</th><th class="won">초진 · 평일</th><th class="won">초진 · 토요일</th><th class="won">재진 · 평일</th><th class="won">재진 · 토요일</th></tr></thead>
-          <tbody style="background:#fff">
-            <tr><td class="cat">6~64세</td><td class="won">5,600원</td><td class="won">7,000원</td><td class="won">4,000원</td><td class="won">4,900원</td></tr>
-            <tr><td class="cat">65세 이상</td><td class="won">1,800원</td><td class="won">4,700원</td><td class="won">1,500원</td><td class="won">1,600원</td></tr>
-            <tr><td class="cat">1~6세 미만</td><td class="won">3,900원</td><td class="won">4,900원</td><td class="won">2,800원</td><td class="won">3,400원</td></tr>
-            <tr><td class="cat">1세 미만</td><td class="won">900원</td><td class="won">1,100원</td><td class="won">600원</td><td class="won">800원</td></tr>
-            <tr><td class="cat">임신부</td><td class="won">1,800원</td><td class="won">2,300원</td><td class="won">1,300원</td><td class="won">1,600원</td></tr>
-          </tbody>
-        </table>
-        <p class="tbl-note">* 진찰료 중 본인이 내는 금액입니다 (보건복지부 고시 기준). 검사·주사 비용은 따로 나오고, 약값은 약국에서 따로 냅니다.</p>
       </div>
     </section>
   </div>
@@ -799,7 +791,7 @@
 
 <footer>
   <div class="inner">
-    <p class="f-logo">연세의원</p>
+    <p class="f-logo"><img class="logo-mark" src="img/Logo.png" alt="">연세의원</p>
     <p><span class="nw">상호명: 연세의원</span> &nbsp;|&nbsp; <span class="nw">대표자: 김보민</span> &nbsp;|&nbsp; <span class="nw">사업자등록번호: 227-10-52631</span></p>
     <p><span class="nw">TEL: 042-626-7572</span> &nbsp;|&nbsp; <span class="nw">FAX: 042-626-7571</span> &nbsp;|&nbsp; <span class="nw">주소: (34389) 대전 대덕구 중리로 62</span></p>
     <div class="copy"><span><a href="#care">비급여 진료비</a> · 개인정보처리방침</span><span>Copyright © 2026 연세의원</span></div>
