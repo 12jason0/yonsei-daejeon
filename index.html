@@ -340,7 +340,7 @@
   /* 오른쪽 퀵메뉴 (PC) */
   .quick { position: fixed; right: 28px; top: 50%; transform: translateY(-50%); z-index: 40; display: none; flex-direction: column; align-items: center; gap: 12px; }
   .quick-pill { display: flex; flex-direction: column; padding: 12px 0; background: var(--brand); border-radius: 40px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
-  .quick-pill a { width: 76px; padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; color: #fff; font-size: 12px; font-weight: 600; transition: opacity 160ms var(--ease); }
+  .quick-pill a { width: 76px; padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; color: #fff; font-size: 12px; font-weight: 600; text-align: center; transition: opacity 160ms var(--ease); }
   .quick-pill a:hover { opacity: 0.8; }
   .quick-pill .ic { width: 24px; height: 24px; }
   .top-btn { width: 52px; height: 52px; display: grid; place-items: center; border: 0; border-radius: 50%; background: #fff; color: var(--brand); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); cursor: pointer; }
@@ -711,7 +711,7 @@
                 <a class="btn btn-naver" href="https://naver.me/IGsaVwwV" target="_blank" rel="noopener"><svg class="ic ic-s"><use href="#i-pin"/></svg>네이버 지도</a>
                 <a class="btn btn-kakao" href="https://place.map.kakao.com/9248945" target="_blank" rel="noopener"><svg class="ic ic-s"><use href="#i-pin"/></svg>카카오맵</a>
               </div>
-              <a class="btn btn-outline" href="tel:0426267572"><svg class="ic ic-s"><use href="#i-phone"/></svg>전화하기</a>
+              <a class="btn btn-outline" href="tel:0426267572" data-call><svg class="ic ic-s"><use href="#i-phone"/></svg>전화하기</a>
             </div>
           </div>
         </div>
@@ -818,7 +818,7 @@
 <aside class="quick" aria-label="빠른 메뉴">
   <div class="quick-pill">
     <a href="https://pf.kakao.com" target="_blank" rel="noopener" title="카카오톡 채널 1:1 문의로 연결 (원장님 채널 주소로 교체)"><svg class="ic"><use href="#i-chat"/></svg>카톡 문의</a>
-    <a href="tel:0426267572"><svg class="ic"><use href="#i-phone"/></svg>전화</a>
+    <a href="tel:0426267572" data-call><svg class="ic"><use href="#i-phone"/></svg>전화</a>
     <a href="#hours"><svg class="ic"><use href="#i-pin"/></svg>오시는 길</a>
   </div>
   <button class="top-btn" type="button" aria-label="맨 위로" data-top><svg class="ic"><use href="#i-up"/></svg></button>
@@ -834,6 +834,12 @@
 <script>
   // 스크립트가 돌면: 메뉴 링크 누르면 모바일 메뉴 닫기, 맨 위로 버튼
   document.querySelectorAll('.m-menu a').forEach(a => a.addEventListener('click', () => { document.getElementById('nav-toggle').checked = false; }));
+  // 전화 버튼: 폰(768px 이하)은 바로 전화, PC는 누르면 번호를 보여 줌
+  document.querySelectorAll('[data-call]').forEach(a => a.addEventListener('click', e => {
+    if (matchMedia('(max-width: 768px)').matches) return;
+    e.preventDefault();
+    a.lastChild.textContent = '042-626-\u20607572';   // 단어 잇기 문자(\u2060): 퀵메뉴에서 줄이 넘치면 '042-' / '626-7572'로만 나뉘게
+  }));
   document.querySelector('[data-top]').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   // 진료 안내 슬라이드: 5초마다 자동으로 넘어가고, 마우스로 끌거나 손가락으로 밀어서 넘김
   document.documentElement.classList.add('js');
