@@ -338,9 +338,20 @@
   @media (min-width: 960px) { footer { padding-bottom: 48px; } }
 
   /* 오른쪽 퀵메뉴 (PC) */
+  .call-dlg { width: min(400px, calc(100% - 40px)); margin: auto; padding: 0; border: 0; border-radius: 8px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18); font-family: var(--font); color: var(--body); }
+  .call-dlg::backdrop { background: rgba(18, 18, 18, 0.45); }
+  .call-dlg form { position: relative; padding: 36px 32px 28px; text-align: center; }
+  .call-dlg h2 { font-size: 18px; font-weight: 700; color: var(--ink); }
+  .call-num { margin-top: 12px; font-size: 32px; font-weight: 700; color: var(--brand); letter-spacing: -0.01em; }
+  .call-time { margin-top: 8px; font-size: 14px; color: var(--mute); }
+  .call-btns { display: flex; justify-content: center; gap: 8px; margin-top: 24px; }
+  .call-done { min-height: 22px; margin-top: 12px; font-size: 14px; font-weight: 600; color: var(--brand); }
+  .call-dlg button { font-family: inherit; }
+  .call-x { position: absolute; top: 12px; right: 12px; width: 40px; height: 40px; display: grid; place-items: center; border: 0; background: none; color: var(--mute); cursor: pointer; }
+  .call-x:hover { color: var(--ink); }
   .quick { position: fixed; right: 28px; top: 50%; transform: translateY(-50%); z-index: 40; display: none; flex-direction: column; align-items: center; gap: 12px; }
   .quick-pill { display: flex; flex-direction: column; padding: 12px 0; background: var(--brand); border-radius: 40px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); }
-  .quick-pill a { width: 76px; padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; color: #fff; font-size: 12px; font-weight: 600; text-align: center; transition: opacity 160ms var(--ease); }
+  .quick-pill a { width: 76px; padding: 12px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; color: #fff; font-size: 12px; font-weight: 600; transition: opacity 160ms var(--ease); }
   .quick-pill a:hover { opacity: 0.8; }
   .quick-pill .ic { width: 24px; height: 24px; }
   .top-btn { width: 52px; height: 52px; display: grid; place-items: center; border: 0; border-radius: 50%; background: #fff; color: var(--brand); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); cursor: pointer; }
@@ -815,6 +826,20 @@
   </div>
 </footer>
 
+<dialog class="call-dlg" id="call-dlg" aria-labelledby="call-dlg-t">
+  <form method="dialog">
+    <button class="call-x" aria-label="닫기"><svg class="ic" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <h2 id="call-dlg-t">전화 문의</h2>
+    <p class="call-num">042-626-7572</p>
+    <p class="call-time">평일 9:00~18:00 (점심 12:30~13:30)<br>토요일 9:00~13:00 · 일요일·공휴일 휴진</p>
+    <div class="call-btns">
+      <button type="button" class="btn btn-brand" data-copy>번호 복사</button>
+      <button class="btn btn-outline">닫기</button>
+    </div>
+    <p class="call-done" role="status"></p>
+  </form>
+</dialog>
+
 <aside class="quick" aria-label="빠른 메뉴">
   <div class="quick-pill">
     <a href="https://pf.kakao.com" target="_blank" rel="noopener" title="카카오톡 채널 1:1 문의로 연결 (원장님 채널 주소로 교체)"><svg class="ic"><use href="#i-chat"/></svg>카톡 문의</a>
@@ -834,12 +859,20 @@
 <script>
   // 스크립트가 돌면: 메뉴 링크 누르면 모바일 메뉴 닫기, 맨 위로 버튼
   document.querySelectorAll('.m-menu a').forEach(a => a.addEventListener('click', () => { document.getElementById('nav-toggle').checked = false; }));
-  // 전화 버튼: 폰(768px 이하)은 바로 전화, PC는 누르면 번호를 보여 줌
+  // 전화 버튼: 폰(768px 이하)은 바로 전화, PC는 번호 창(모달)을 띄움
+  const callDlg = document.getElementById('call-dlg');
   document.querySelectorAll('[data-call]').forEach(a => a.addEventListener('click', e => {
     if (matchMedia('(max-width: 768px)').matches) return;
     e.preventDefault();
-    a.lastChild.textContent = '042-626-\u20607572';   // 단어 잇기 문자(\u2060): 퀵메뉴에서 줄이 넘치면 '042-' / '626-7572'로만 나뉘게
+    callDlg.showModal();
   }));
+  callDlg.addEventListener('click', e => { if (e.target === callDlg) callDlg.close(); });   // 바깥(배경) 클릭
+  callDlg.querySelector('[data-copy]').addEventListener('click', async () => {
+    const done = callDlg.querySelector('.call-done');
+    try { await navigator.clipboard.writeText('042-626-7572'); done.textContent = '복사했어요'; }
+    catch { done.textContent = '복사하지 못했어요. 번호를 직접 적어 주세요'; }
+    clearTimeout(done.t); done.t = setTimeout(() => { done.textContent = ''; }, 2000);
+  });
   document.querySelector('[data-top]').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   // 진료 안내 슬라이드: 5초마다 자동으로 넘어가고, 마우스로 끌거나 손가락으로 밀어서 넘김
   document.documentElement.classList.add('js');
