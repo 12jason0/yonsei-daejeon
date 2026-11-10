@@ -271,11 +271,15 @@
   .info-box span { display: block; margin-top: 4px; font-size: 15px; line-height: 1.7; color: var(--sub); }
   .info-box a { color: var(--brand); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
-  .loc { display: grid; gap: 32px; margin-top: 32px; }
-  @media (min-width: 960px) { .loc { grid-template-columns: 1fr 1fr; gap: 56px; margin-top: 56px; } }
-  .map { height: 220px; margin-top: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: #e8ecf1; color: var(--mute); font-size: 15px; }
+  .loc { display: grid; gap: 32px; margin-top: 48px; }
+  @media (min-width: 960px) { .loc { grid-template-columns: 1.4fr 1fr; gap: 56px; margin-top: 64px; } }
+  .map { height: 220px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: #e8ecf1; color: var(--mute); font-size: 15px; }
   .map .ic { width: 32px; height: 32px; color: var(--brand); }
-  @media (min-width: 960px) { .map { height: 300px; margin-top: 64px; } }
+  /* PC: 높이는 오른쪽 칸에 맞춤(그리드가 늘려 줌) */
+  @media (min-width: 960px) { .map { height: auto; } }
+  /* 네이버 로고·저작권 링크 눌러도 다른 데로 안 가게 */
+  .map a { pointer-events: none; }
+  .loc-photo { margin-bottom: 28px; }
   /* 말풍선 마커: 꼬리 끝(아래 가운데)이 병원 위치 */
   .map-pin { position: relative; display: flex; align-items: center; gap: 6px; padding: 5px 10px 5px 5px; background: #fff; border: 2px solid var(--brand); border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); transform: translate(-50%, calc(-100% - 9px)); }
   .map-pin::before, .map-pin::after { content: ""; position: absolute; left: 50%; border: solid transparent; }
@@ -692,10 +696,10 @@
         <div class="center">
           <h2 class="title">오시는 길</h2>
         </div>
-        <div class="map" role="img" aria-label="지도 자리"><svg class="ic"><use href="#i-pin"/></svg>네이버 지도가 들어갈 자리</div>
         <div class="loc">
-          <figure class="loc-photo"><img src="img/front.jpg" alt="파란색 연세의원 간판이 걸린 건물 앞" loading="lazy" decoding="async" width="900" height="675"><figcaption>파란색 '연세의원' 간판을 찾아오세요</figcaption></figure>
+          <div class="map" role="img" aria-label="지도 자리"><svg class="ic"><use href="#i-pin"/></svg>네이버 지도가 들어갈 자리</div>
           <div>
+            <figure class="loc-photo"><img src="img/front.jpg" alt="파란색 연세의원 간판이 걸린 건물 앞" loading="lazy" decoding="async" width="900" height="675"><figcaption>파란색 '연세의원' 간판을 찾아오세요</figcaption></figure>
             <ul class="loc-list">
               <li><b>주소</b><span>대전 대덕구 중리로 62 (중리동)<small>중리시장 서문 근처 · 우편번호 34389</small></span></li>
               <li><b>전화</b><span>042-626-7572<small>피부 시술은 전화로 예약해 주세요</small></span></li>
@@ -704,7 +708,7 @@
             <div class="loc-btns">
               <div class="loc-maps">
                 <a class="btn btn-naver" href="https://naver.me/IGsaVwwV" target="_blank" rel="noopener"><svg class="ic ic-s"><use href="#i-pin"/></svg>네이버 지도</a>
-                <a class="btn btn-kakao" href="https://map.kakao.com/link/search/%EB%8C%80%EC%A0%84%20%EB%8C%80%EB%8D%95%EA%B5%AC%20%EC%A4%91%EB%A6%AC%EB%A1%9C%2062" target="_blank" rel="noopener"><svg class="ic ic-s"><use href="#i-pin"/></svg>카카오맵</a>
+                <a class="btn btn-kakao" href="https://place.map.kakao.com/9248945" target="_blank" rel="noopener"><svg class="ic ic-s"><use href="#i-pin"/></svg>카카오맵</a>
               </div>
               <a class="btn btn-outline" href="tel:0426267572"><svg class="ic ic-s"><use href="#i-phone"/></svg>전화하기</a>
             </div>
@@ -919,17 +923,16 @@
     const ADDR = '대전 대덕구 중리로 62';
     const original = box.innerHTML;
     // 인증 실패하면 원래 회색 칸으로 되돌림
-    window.navermap_authFailure = () => { box.innerHTML = original; box.removeAttribute('style'); box.setAttribute('aria-label', '지도 자리'); };
+    window.navermap_authFailure = () => { box.innerHTML = original; box.removeAttribute('style'); box.setAttribute('role', 'img'); box.setAttribute('aria-label', '지도 자리'); };
     window.initYonseiMap = () => {
       naver.maps.Service.geocode({ query: ADDR }, (status, res) => {
         const a = status === naver.maps.Service.Status.OK && res.v2.addresses[0];
         if (!a) return;
         const at = new naver.maps.LatLng(+a.y, +a.x);
         box.innerHTML = '';
-        // 보기 전용: 끌기·휠·클릭 모두 막아 페이지 스크롤만 되게
-        box.style.cssText = 'display: block; pointer-events: none';
+        box.style.display = 'block'; box.removeAttribute('role');
         box.setAttribute('aria-label', '연세의원 위치 지도: ' + ADDR);
-        const map = new naver.maps.Map(box, { center: at, zoom: 15, draggable: false, scrollWheel: false, pinchZoom: false, keyboardShortcuts: false, disableDoubleClickZoom: true, disableDoubleTapZoom: true });
+        const map = new naver.maps.Map(box, { center: at, zoom: 15, keyboardShortcuts: false });
         new naver.maps.Marker({ position: at, map, clickable: false, icon: {
           content: '<div class="map-pin"><img src="img/Logo.png" alt=""><b>연세의원</b></div>',
           anchor: new naver.maps.Point(0, 0) } });
