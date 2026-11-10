@@ -276,9 +276,13 @@
   .map { height: 220px; margin-top: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: #e8ecf1; color: var(--mute); font-size: 15px; }
   .map .ic { width: 32px; height: 32px; color: var(--brand); }
   @media (min-width: 960px) { .map { height: 300px; margin-top: 64px; } }
-  .map-pin { display: flex; flex-direction: column; align-items: center; gap: 2px; transform: translate(-50%, -100%); }
-  .map-pin b { padding: 2px 8px; background: #fff; border: 1px solid var(--brand); border-radius: 2px; font-size: 13px; font-weight: 700; color: var(--brand); white-space: nowrap; }
-  .map-pin svg { width: 26px; height: 34px; }
+  /* 말풍선 마커: 꼬리 끝(아래 가운데)이 병원 위치 */
+  .map-pin { position: relative; display: flex; align-items: center; gap: 6px; padding: 5px 10px 5px 5px; background: #fff; border: 2px solid var(--brand); border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); transform: translate(-50%, calc(-100% - 9px)); }
+  .map-pin::before, .map-pin::after { content: ""; position: absolute; left: 50%; border: solid transparent; }
+  .map-pin::before { top: 100%; margin-left: -9px; border-width: 9px 9px 0; border-top-color: var(--brand); }
+  .map-pin::after { top: calc(100% - 1px); margin-left: -6px; border-width: 7px 6px 0; border-top-color: #fff; }
+  .map-pin img { width: 24px; height: 24px; border-radius: 5px; }
+  .map-pin b { font-size: 14px; font-weight: 700; color: var(--brand); white-space: nowrap; }
   .loc-photo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; background: #e9edf2; }
   .loc-photo figcaption { margin-top: 8px; font-size: 14px; color: var(--mute); }
   .loc-list li { display: flex; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--line); }
@@ -286,7 +290,10 @@
   .loc-list b { width: 72px; flex: none; font-size: 16px; font-weight: 700; color: var(--ink); }
   .loc-list span { font-size: 16px; color: var(--body); }
   .loc-list small { display: block; margin-top: 4px; font-size: 14px; color: var(--mute); }
-  .loc-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+  .loc-btns, .loc-maps { display: flex; flex-wrap: wrap; gap: 8px; }
+  .loc-btns { margin-top: 28px; }
+  .btn-naver { background: #03c75a; color: #fff; }
+  .btn-kakao { background: #fee500; color: #000; }
 
   /* 공지사항 페이지 */
   .bbs-top { display: flex; align-items: center; justify-content: space-between; font-size: 15px; color: var(--sub); }
@@ -695,7 +702,10 @@
               <li><b>진료</b><span>평일 오전 9:00 ~ 오후 6:00<small>토요일 오후 1:00까지 · 일요일·공휴일 휴진</small></span></li>
             </ul>
             <div class="loc-btns">
-              <a class="btn btn-brand" href="https://naver.me/IGsaVwwV" target="_blank" rel="noopener">네이버 지도에서 보기</a>
+              <div class="loc-maps">
+                <a class="btn btn-naver" href="https://naver.me/IGsaVwwV" target="_blank" rel="noopener"><svg class="ic ic-s"><use href="#i-pin"/></svg>네이버 지도</a>
+                <a class="btn btn-kakao" href="https://map.kakao.com/link/search/%EB%8C%80%EC%A0%84%20%EB%8C%80%EB%8D%95%EA%B5%AC%20%EC%A4%91%EB%A6%AC%EB%A1%9C%2062" target="_blank" rel="noopener"><svg class="ic ic-s"><use href="#i-pin"/></svg>카카오맵</a>
+              </div>
               <a class="btn btn-outline" href="tel:0426267572"><svg class="ic ic-s"><use href="#i-phone"/></svg>전화하기</a>
             </div>
           </div>
@@ -921,7 +931,7 @@
         box.setAttribute('aria-label', '연세의원 위치 지도: ' + ADDR);
         const map = new naver.maps.Map(box, { center: at, zoom: 15, draggable: false, scrollWheel: false, pinchZoom: false, keyboardShortcuts: false, disableDoubleClickZoom: true, disableDoubleTapZoom: true });
         new naver.maps.Marker({ position: at, map, clickable: false, icon: {
-          content: '<div class="map-pin"><b>연세의원</b><svg viewBox="0 0 26 34"><path d="M13 0C5.8 0 0 5.6 0 12.6 0 22 13 34 13 34s13-12 13-21.4C26 5.6 20.2 0 13 0z" fill="#1f3d73"/><circle cx="13" cy="12.5" r="4.5" fill="#fff"/></svg></div>',
+          content: '<div class="map-pin"><img src="img/Logo.png" alt=""><b>연세의원</b></div>',
           anchor: new naver.maps.Point(0, 0) } });
       });
     };
