@@ -693,7 +693,7 @@
               <li><b>진료</b><span>평일 오전 9:00 ~ 오후 6:00<small>토요일 오후 1:00까지 · 일요일·공휴일 휴진</small></span></li>
             </ul>
             <div class="loc-btns">
-              <a class="btn btn-brand" href="https://map.naver.com/p/search/%EB%8C%80%EC%A0%84%20%EB%8C%80%EB%8D%95%EA%B5%AC%20%EC%A4%91%EB%A6%AC%EB%A1%9C%2062" target="_blank" rel="noopener">네이버 지도에서 보기</a>
+              <a class="btn btn-brand" href="https://naver.me/IGsaVwwV" target="_blank" rel="noopener">네이버 지도에서 보기</a>
               <a class="btn btn-outline" href="tel:0426267572"><svg class="ic ic-s"><use href="#i-phone"/></svg>전화하기</a>
             </div>
           </div>
@@ -899,6 +899,36 @@
       if (i > 0 && i <= n && i !== pos) { slider.scrollLeft = 0; move(i, SNAP); }
     });
     play();
+  })();
+  // 오시는 길 네이버 지도: 지도 칸이 화면에 보일 때 불러옴. 못 불러오면 회색 칸 그대로
+  (() => {
+    const box = document.querySelector('.loc .map');
+    if (!box || !('IntersectionObserver' in window)) return;
+    const PLACE = 'https://naver.me/IGsaVwwV';
+    const ADDR = '대전 대덕구 중리로 62';
+    const original = box.innerHTML;
+    // 인증 실패하면 원래 회색 칸으로 되돌림
+    window.navermap_authFailure = () => { box.innerHTML = original; box.style.display = ''; box.setAttribute('role', 'img'); };
+    window.initYonseiMap = () => {
+      naver.maps.Service.geocode({ query: ADDR }, (status, res) => {
+        const a = status === naver.maps.Service.Status.OK && res.v2.addresses[0];
+        if (!a) return;
+        const at = new naver.maps.LatLng(+a.y, +a.x);
+        box.innerHTML = ''; box.style.display = 'block'; box.removeAttribute('role');
+        const map = new naver.maps.Map(box, { center: at, zoom: 17 });
+        const marker = new naver.maps.Marker({ position: at, map, title: '연세의원' });
+        naver.maps.Event.addListener(marker, 'click', () => window.open(PLACE, '_blank', 'noopener'));
+      });
+    };
+    const io = new IntersectionObserver(entries => {
+      if (!entries.some(e => e.isIntersecting)) return;
+      io.disconnect();
+      const s = document.createElement('script');
+      s.src = 'https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=rbd4kf7nn5&submodules=geocoder&callback=initYonseiMap';
+      s.async = true;
+      document.head.append(s);
+    }, { rootMargin: '200px' });
+    io.observe(box);
   })();
 </script>
 </body>
