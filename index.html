@@ -271,12 +271,14 @@
   .info-box span { display: block; margin-top: 4px; font-size: 15px; line-height: 1.7; color: var(--sub); }
   .info-box a { color: var(--brand); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
-  .loc { display: grid; gap: 32px; margin-top: 48px; }
-  @media (min-width: 960px) { .loc { grid-template-columns: 1.4fr 1fr; gap: 56px; margin-top: 64px; } }
-  .map { min-height: 360px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: #e8ecf1; color: var(--mute); font-size: 15px; }
+  .loc { display: grid; gap: 32px; margin-top: 32px; }
+  @media (min-width: 960px) { .loc { grid-template-columns: 1fr 1fr; gap: 56px; margin-top: 56px; } }
+  .map { height: 220px; margin-top: 48px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: #e8ecf1; color: var(--mute); font-size: 15px; }
   .map .ic { width: 32px; height: 32px; color: var(--brand); }
-  @media (min-width: 960px) { .map { min-height: 440px; } }
-  .loc-photo { margin-bottom: 28px; }
+  @media (min-width: 960px) { .map { height: 300px; margin-top: 64px; } }
+  .map-pin { display: flex; flex-direction: column; align-items: center; gap: 2px; transform: translate(-50%, -100%); }
+  .map-pin b { padding: 2px 8px; background: #fff; border: 1px solid var(--brand); border-radius: 2px; font-size: 13px; font-weight: 700; color: var(--brand); white-space: nowrap; }
+  .map-pin svg { width: 26px; height: 34px; }
   .loc-photo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; background: #e9edf2; }
   .loc-photo figcaption { margin-top: 8px; font-size: 14px; color: var(--mute); }
   .loc-list li { display: flex; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--line); }
@@ -683,10 +685,10 @@
         <div class="center">
           <h2 class="title">오시는 길</h2>
         </div>
+        <div class="map" role="img" aria-label="지도 자리"><svg class="ic"><use href="#i-pin"/></svg>네이버 지도가 들어갈 자리</div>
         <div class="loc">
-          <div class="map" role="img" aria-label="지도 자리"><svg class="ic"><use href="#i-pin"/></svg>네이버 지도가 들어갈 자리</div>
+          <figure class="loc-photo"><img src="img/front.jpg" alt="파란색 연세의원 간판이 걸린 건물 앞" loading="lazy" decoding="async" width="900" height="675"><figcaption>파란색 '연세의원' 간판을 찾아오세요</figcaption></figure>
           <div>
-            <figure class="loc-photo"><img src="img/front.jpg" alt="파란색 연세의원 간판이 걸린 건물 앞" loading="lazy" decoding="async" width="900" height="675"><figcaption>파란색 '연세의원' 간판을 찾아오세요</figcaption></figure>
             <ul class="loc-list">
               <li><b>주소</b><span>대전 대덕구 중리로 62 (중리동)<small>중리시장 서문 근처 · 우편번호 34389</small></span></li>
               <li><b>전화</b><span>042-626-7572<small>피부 시술은 전화로 예약해 주세요</small></span></li>
@@ -902,22 +904,25 @@
   })();
   // 오시는 길 네이버 지도: 지도 칸이 화면에 보일 때 불러옴. 못 불러오면 회색 칸 그대로
   (() => {
-    const box = document.querySelector('.loc .map');
+    const box = document.querySelector('.map');
     if (!box || !('IntersectionObserver' in window)) return;
-    const PLACE = 'https://naver.me/IGsaVwwV';
     const ADDR = '대전 대덕구 중리로 62';
     const original = box.innerHTML;
     // 인증 실패하면 원래 회색 칸으로 되돌림
-    window.navermap_authFailure = () => { box.innerHTML = original; box.style.display = ''; box.setAttribute('role', 'img'); };
+    window.navermap_authFailure = () => { box.innerHTML = original; box.removeAttribute('style'); box.setAttribute('aria-label', '지도 자리'); };
     window.initYonseiMap = () => {
       naver.maps.Service.geocode({ query: ADDR }, (status, res) => {
         const a = status === naver.maps.Service.Status.OK && res.v2.addresses[0];
         if (!a) return;
         const at = new naver.maps.LatLng(+a.y, +a.x);
-        box.innerHTML = ''; box.style.display = 'block'; box.removeAttribute('role');
-        const map = new naver.maps.Map(box, { center: at, zoom: 17 });
-        const marker = new naver.maps.Marker({ position: at, map, title: '연세의원' });
-        naver.maps.Event.addListener(marker, 'click', () => window.open(PLACE, '_blank', 'noopener'));
+        box.innerHTML = '';
+        // 보기 전용: 끌기·휠·클릭 모두 막아 페이지 스크롤만 되게
+        box.style.cssText = 'display: block; pointer-events: none';
+        box.setAttribute('aria-label', '연세의원 위치 지도: ' + ADDR);
+        const map = new naver.maps.Map(box, { center: at, zoom: 15, draggable: false, scrollWheel: false, pinchZoom: false, keyboardShortcuts: false, disableDoubleClickZoom: true, disableDoubleTapZoom: true });
+        new naver.maps.Marker({ position: at, map, clickable: false, icon: {
+          content: '<div class="map-pin"><b>연세의원</b><svg viewBox="0 0 26 34"><path d="M13 0C5.8 0 0 5.6 0 12.6 0 22 13 34 13 34s13-12 13-21.4C26 5.6 20.2 0 13 0z" fill="#1f3d73"/><circle cx="13" cy="12.5" r="4.5" fill="#fff"/></svg></div>',
+          anchor: new naver.maps.Point(0, 0) } });
       });
     };
     const io = new IntersectionObserver(entries => {
