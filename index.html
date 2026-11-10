@@ -281,12 +281,12 @@
   .map a { pointer-events: none; }
   .loc-photo { margin-bottom: 28px; }
   /* 말풍선 마커: 꼬리 끝(아래 가운데)이 병원 위치 */
-  .map-pin { position: relative; display: flex; align-items: center; gap: 6px; padding: 5px 10px 5px 5px; background: #fff; border: 2px solid var(--brand); border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); transform: translate(-50%, calc(-100% - 9px)); }
+  .map-pin { position: relative; display: flex; align-items: center; gap: 6px; padding: 6px 12px 6px 6px; background: #fff; border: 2px solid var(--brand); border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); transform: translate(-50%, calc(-100% - 9px)); }
   .map-pin::before, .map-pin::after { content: ""; position: absolute; left: 50%; border: solid transparent; }
   .map-pin::before { top: 100%; margin-left: -9px; border-width: 9px 9px 0; border-top-color: var(--brand); }
   .map-pin::after { top: calc(100% - 1px); margin-left: -6px; border-width: 7px 6px 0; border-top-color: #fff; }
-  .map-pin img { width: 24px; height: 24px; border-radius: 5px; }
-  .map-pin b { font-size: 14px; font-weight: 700; color: var(--brand); white-space: nowrap; }
+  .map-pin img { width: 28px; height: 28px; border-radius: 6px; }
+  .map-pin b { font-size: 15px; font-weight: 700; color: var(--brand); white-space: nowrap; }
   .loc-photo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; background: #e9edf2; }
   @media (min-width: 960px) { .loc-photo img { aspect-ratio: 16 / 9; } }
   .loc-photo figcaption { margin-top: 8px; font-size: 14px; color: var(--mute); }
@@ -933,7 +933,7 @@
         box.innerHTML = '';
         box.style.display = 'block'; box.removeAttribute('role');
         box.setAttribute('aria-label', '연세의원 위치 지도: ' + ADDR);
-        const map = new naver.maps.Map(box, { center: at, zoom: 15, keyboardShortcuts: false });
+        const map = new naver.maps.Map(box, { center: at, zoom: 18, keyboardShortcuts: false });
         new naver.maps.Marker({ position: at, map, clickable: false, icon: {
           content: '<div class="map-pin"><img src="img/Logo.png" alt=""><b>연세의원</b></div>',
           anchor: new naver.maps.Point(0, 0) } });
