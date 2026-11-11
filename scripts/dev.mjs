@@ -18,7 +18,7 @@ process.env.SESSION_SECRET ||= randomBytes(32).toString('hex');
 const { build } = await import('./build.mjs');
 await build();
 
-const TYPES = { '.html': 'text/html; charset=utf-8', '.json': 'application/json', '.jpg': 'image/jpeg', '.png': 'image/png', '.js': 'text/javascript', '.css': 'text/css' };
+const TYPES = { '.html': 'text/html; charset=utf-8', '.json': 'application/json', '.jpg': 'image/jpeg', '.png': 'image/png', '.js': 'text/javascript', '.css': 'text/css', '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml' };
 const NOINDEX = { 'x-robots-tag': 'noindex, nofollow', 'cache-control': 'no-store' };
 
 createServer(async (req, res) => {

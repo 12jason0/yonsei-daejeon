@@ -19,6 +19,8 @@ export async function build({ quiet = false } = {}) {
   await writeFile(new URL('index.html', dist), html);
   await cp(new URL('img/', root), new URL('img/', dist), { recursive: true });
   await cp(new URL('admin/', root), new URL('admin/', dist), { recursive: true });
+  await cp(new URL('robots.txt', root), new URL('robots.txt', dist));
+  await cp(new URL('sitemap.xml', root), new URL('sitemap.xml', dist));
   await writeFile(new URL('version.json', dist), JSON.stringify({ savedAt: content.savedAt }));
   if (!quiet) console.log(`빌드 완료: ${latest ? `저장본 ${content.savedAt}` : 'seed.json'} (저장소: ${storeMode()})`);
   return content;
