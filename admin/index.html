@@ -149,7 +149,9 @@
   .savebar { position: sticky; bottom: 0; z-index: 5; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 8px; padding: 16px 0 calc(16px + env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--bg) 24px); }
   .savebar .primary { min-width: 160px; }
   .savebar .left { margin-right: auto; }
-  @media (max-width: 599px) { .savebar .primary { flex: 1 1 100%; order: -1; } .savebar .btn:not(.primary) { flex: 1; } .savebar .left { margin: 0; } }
+  .savebar .dirty { align-self: center; padding: 8px 14px; border-radius: 999px; background: #fff4d6; color: #7a5200; font-size: 16px; font-weight: 700; }
+  .savebar .dirty[hidden] { display: none; }
+  @media (max-width: 599px) { .savebar .primary { flex: 1 1 100%; order: -1; } .savebar .btn:not(.primary) { flex: 1; } .savebar .left { margin: 0; } .savebar .dirty { flex: 1 1 100%; order: -2; text-align: center; } }
 
   /* 위쪽 알림 */
   .toast { position: fixed; top: 16px; left: 50%; z-index: 30; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; max-width: calc(100% - 32px); padding: 14px 22px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 17px; font-weight: 600; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18); }
@@ -222,6 +224,11 @@ const isDirty = () => !!saved && (JSON.stringify(data) !== JSON.stringify(saved)
 window.addEventListener('beforeunload', e => { if (isDirty()) { e.preventDefault(); e.returnValue = ''; } });
 const leaveOk = () => !isDirty() || confirm('저장하지 않은 내용이 있어요.\n저장하지 않고 나갈까요?');
 const discard = () => { data = clone(saved); draft = draftOrigin = null; };
+// [저장] 옆 "저장 안 한 내용이 있어요" — 칸을 고칠 때마다, 화면을 다시 그릴 때마다 맞춤
+const dirtyNote = () => h('span', { class: 'dirty', role: 'status', hidden: true }, '저장 안 한 내용이 있어요');
+const markDirty = () => { const d = isDirty(); root.querySelectorAll('.dirty').forEach(e => { e.hidden = !d; }); };
+root.addEventListener('input', markDirty);
+root.addEventListener('change', markDirty);
 
 // ---- 의료광고 규정 단어 ----
 const BANNED = ['할인', '이벤트', '무료', '최저', '최고', '유일', '100%', '부작용 없', '완치', '보장', '위고비', '마운자로', '삭센다'];
@@ -354,6 +361,7 @@ function draw(keepScroll = true) {
     h('aside', { class: 'side' }, brand(), menu, btn('로그아웃', logout, 'small out')),
     h('main', { class: 'content' }, h('div', { class: 'page' }, page))));
   scrollTo(0, keepScroll ? y : 0);
+  markDirty();
 }
 
 // ---- 공지사항 ----
@@ -417,6 +425,7 @@ function noticeEditor() {
       err),
     h('div', { class: 'savebar' },
       d.id != null ? btn('지우기', doDelete, 'danger left') : null,
+      dirtyNote(),
       btn('취소', back),
       btn('저장', doSave, 'primary')));
 }
@@ -490,7 +499,7 @@ function pricesView() {
         p.notes = e.target.value.split('\n').map(s => s.trim().replace(/^\*\s*/, '')).filter(Boolean);
       } })),
     err,
-    h('div', { class: 'savebar' }, btn('저장', doSave, 'primary')));
+    h('div', { class: 'savebar' }, dirtyNote(), btn('저장', doSave, 'primary')));
 }
 
 // ---- 진료 시간 ----
@@ -529,7 +538,7 @@ function hoursView() {
       text('h-closed', '쉬는 날', 'closedDays'),
       text('h-closed-note', '덧붙일 말', 'closedNote')),
     err,
-    h('div', { class: 'savebar' }, btn('저장', doSave, 'primary')));
+    h('div', { class: 'savebar' }, dirtyNote(), btn('저장', doSave, 'primary')));
 }
 
 start();
