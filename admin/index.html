@@ -368,6 +368,7 @@ function pricesView() {
         p.notes = e.target.value.split('\n').map(s => s.trim().replace(/^\*\s*/, '')).filter(Boolean);
       } }),
       h('p', { class: 'help' }, '한 줄에 하나씩 써 주세요. 앞에 *는 저절로 붙어요.')),
+    h('p', { class: 'help', style: 'margin-bottom:12px' }, '가격표를 바꿔서 저장하면 표 위의 “○년 ○월 기준”이 저장한 달로 저절로 바뀌어요.'),
     err,
     h('button', { type: 'button', class: 'btn primary wide', onclick: doSave }, '가격표 저장'));
 }

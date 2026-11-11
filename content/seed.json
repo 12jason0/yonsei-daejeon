@@ -11,6 +11,7 @@
     }
   ],
   "prices": {
+    "updated": "2026-11",
     "groups": [
       { "name": "얼굴 잡티 제거", "note": "", "items": [
         { "name": "1차", "note": "", "price": "100,000원" },
