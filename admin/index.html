@@ -204,6 +204,7 @@ const btn = (text, onclick, cls = '', extra = {}) => h('button', { type: 'button
 async function api(path, body) {
   const res = await fetch('/api/' + path, body === undefined ? { cache: 'no-store' } : {
     method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body),
+    signal: AbortSignal.timeout(30000),   // 응답 없으면 30초 뒤 실패로 → 토스트가 '~하고 있어요'에 멈추지 않게
   });
   const data = await res.json().catch(() => ({}));
   return { status: res.status, ok: res.ok, data };
@@ -252,9 +253,9 @@ function showToast(text, kind, link) {
   if (kind === 'ok') toastTimer = setTimeout(() => { toast.hidden = true; }, 15000);
 }
 
-function watchDeploy(savedAt) {
+function watchDeploy(savedAt, done) {
   clearInterval(watchTimer);
-  showToast('홈페이지에 반영 중이에요 (1분쯤)');
+  showToast(`${done}. 홈페이지에 반영 중이에요 (1분쯤)`);
   const started = Date.now();
   watchTimer = setInterval(async () => {
     try {
@@ -265,24 +266,27 @@ function watchDeploy(savedAt) {
   }, 5000);
 }
 
-async function save(next, texts) {
+const FAIL = '안 됐어요. 다시 눌러 주세요';
+// 마지막 값: [하는 중, 끝남] — 누른 버튼에 맞는 말 (기본은 저장)
+async function save(next, texts, [doing, done] = ['저장하고 있어요', '저장했어요']) {
   if (busy) return false;
   const words = findBanned(texts);
   if (words.length && !(await askBanned(words))) return false;
   busy = true;
-  showToast('저장하는 중이에요…');
+  clearInterval(watchTimer);
+  showToast(doing + '…');
   try {
     const r = await api('content', { content: next, baseSavedAt: saved.savedAt });
     if (r.status === 401) { saved = null; showToast('로그인이 풀렸어요. 다시 로그인해 주세요', 'err'); showLogin(); return false; }
-    if (!r.ok) { showToast(r.data.error || '저장하지 못했어요. 잠시 뒤 다시 해 주세요', 'err'); return false; }
+    if (!r.ok) { showToast(r.data.error || FAIL, 'err'); return false; }
     next.savedAt = r.data.savedAt;
     saved = clone(next);
     data = clone(next);
-    if (r.data.deployed === false) showToast('저장은 됐지만 홈페이지 반영이 안 됐어요. 한 번 더 저장해 주세요', 'err');
-    else watchDeploy(r.data.savedAt);
+    if (r.data.deployed === false) showToast(`${done}. 그런데 홈페이지 반영이 안 됐어요. 아무 화면에서나 저장을 한 번 더 눌러 주세요`, 'err');
+    else watchDeploy(r.data.savedAt, done);
     return true;
   } catch {
-    showToast('인터넷 연결을 확인하고 다시 저장해 주세요', 'err');
+    showToast(FAIL, 'err');
     return false;
   } finally {
     busy = false;
@@ -395,7 +399,7 @@ function noticeEditor() {
     if (!confirm(`이 공지를 지울까요?\n지우면 되돌릴 수 없어요.${extra}`)) return;
     const next = clone(saved);
     next.notices = next.notices.filter(n => n.id !== d.id);
-    if (await save(next, [])) done();
+    if (await save(next, [], ['지우고 있어요', '지웠어요'])) done();
   };
 
   return h('div', {},
